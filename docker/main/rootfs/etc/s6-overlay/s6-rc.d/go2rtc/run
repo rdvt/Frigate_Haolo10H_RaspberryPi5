@@ -1,0 +1,126 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+# Start the go2rtc service
+
+set -o errexit -o nounset -o pipefail
+
+# Logs should be sent to stdout so that s6 can collect them
+
+function get_ip_and_port_from_supervisor() {
+    local ip_address
+    # Example: 192.168.1.10/24
+    local ip_regex='^([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})/[0-9]{1,2}$'
+    if ip_address=$(
+        curl -fsSL \
+            -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+            -H "Content-Type: application/json" \
+            http://supervisor/network/interface/default/info |
+            jq --exit-status --raw-output '.data.ipv4.address[0]'
+    ) && [[ "${ip_address}" =~ ${ip_regex} ]]; then
+        ip_address="${BASH_REMATCH[1]}"
+        echo "[INFO] Got IP address from supervisor: ${ip_address}"
+    else
+        echo "[WARN] Failed to get IP address from supervisor"
+        return 0
+    fi
+
+    local webrtc_port
+    local port_regex='^([0-9]{1,5})$'
+    if webrtc_port=$(
+        curl -fsSL \
+            -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+            -H "Content-Type: application/json" \
+            http://supervisor/addons/self/info |
+            jq --exit-status --raw-output '.data.network["8555/tcp"]'
+    ) && [[ "${webrtc_port}" =~ ${port_regex} ]]; then
+        webrtc_port="${BASH_REMATCH[1]}"
+        echo "[INFO] Got WebRTC port from supervisor: ${webrtc_port}"
+    else
+        echo "[WARN] Failed to get WebRTC port from supervisor"
+        return 0
+    fi
+
+    export FRIGATE_GO2RTC_WEBRTC_CANDIDATE_INTERNAL="${ip_address}:${webrtc_port}"
+}
+
+function set_libva_version() {
+    local ffmpeg_path
+    ffmpeg_path=$(python3 /usr/local/ffmpeg/get_ffmpeg_path.py)
+    LIBAVFORMAT_VERSION_MAJOR=$("$ffmpeg_path" -version | grep -Po "libavformat\W+\K\d+")
+    export LIBAVFORMAT_VERSION_MAJOR
+}
+
+function setup_homekit_config() {
+    local config_path="$1"
+
+    if [[ ! -f "${config_path}" ]]; then
+        echo "[INFO] Creating empty config file for HomeKit..."
+        echo '{}' > "${config_path}"
+    fi
+
+    # Convert YAML to JSON for jq processing
+    local temp_json="/tmp/cache/homekit_config.json"
+    yq eval -o=json "${config_path}" > "${temp_json}" 2>/dev/null || {
+        echo "[WARNING] Failed to convert HomeKit config to JSON, skipping cleanup"
+        return 0
+    }
+
+    # Use jq to filter and keep only the homekit section
+    local cleaned_json="/tmp/cache/homekit_cleaned.json"
+    jq '
+        # Keep only the homekit section if it exists, otherwise empty object
+        if has("homekit") then {homekit: .homekit} else {} end
+    ' "${temp_json}" > "${cleaned_json}" 2>/dev/null || {
+        echo '{}' > "${cleaned_json}"
+    }
+
+    # Convert back to YAML and write to the config file
+    yq eval -P "${cleaned_json}" > "${config_path}" 2>/dev/null || {
+        echo "[WARNING] Failed to convert cleaned config to YAML, creating minimal config"
+        echo '{}' > "${config_path}"
+    }
+
+    # Clean up temp files
+    rm -f "${temp_json}" "${cleaned_json}"
+}
+
+set_libva_version
+
+if [[ -f "/dev/shm/go2rtc.yaml" ]]; then
+    echo "[INFO] Removing stale config from last run..."
+    rm /dev/shm/go2rtc.yaml
+fi
+
+if [[ ! -f "/dev/shm/go2rtc.yaml" ]]; then
+    echo "[INFO] Preparing new go2rtc config..."
+
+    if [[ -n "${SUPERVISOR_TOKEN:-}" ]]; then
+        # Running as a Home Assistant Add-on, infer the IP address and port
+        get_ip_and_port_from_supervisor
+    fi
+
+    python3 /usr/local/go2rtc/create_config.py
+else
+    echo "[WARNING] Unable to remove existing go2rtc config. Changes made to your frigate config file may not be recognized. Please remove the /dev/shm/go2rtc.yaml from your docker host manually."
+fi
+
+# HomeKit configuration persistence setup
+readonly homekit_config_path="/config/go2rtc_homekit.yml"
+setup_homekit_config "${homekit_config_path}"
+
+readonly config_path="/config"
+
+if [[ -x "${config_path}/go2rtc" ]]; then
+  readonly binary_path="${config_path}/go2rtc"
+  echo "[WARN] Using go2rtc binary from '${binary_path}' instead of the embedded one"
+else
+  readonly binary_path="/usr/local/go2rtc/bin/go2rtc"
+fi
+
+echo "[INFO] Starting go2rtc..."
+
+# Replace the bash process with the go2rtc process, redirecting stderr to stdout
+# Use HomeKit config as the primary config so writebacks go there
+# The main config from Frigate will be loaded as a secondary config
+exec 2>&1
+exec "${binary_path}" -config="${homekit_config_path}" -config=/dev/shm/go2rtc.yaml

@@ -1,0 +1,29 @@
+.DS_Store
+__pycache__
+.mypy_cache
+*.swp
+debug
+.vscode/*
+!.vscode/launch.json
+config/*
+!config/*.example
+models
+*.mp4
+# Docker image exported by build_hailo10h_image.sh (too large for Git, >100 MB)
+dist/
+*.tar.gz
+# Hailo packages are not versioned; download them from the Hailo Developer Zone
+# (see hailo_files/README.txt)
+hailo_files/*.deb
+hailo_files/*.whl
+*.db
+*.csv
+frigate/version.py
+web/build
+web/node_modules
+web/coverage
+web/.env
+core
+!/web/**/*.ts
+.idea/*
+.ipynb_checkpoints

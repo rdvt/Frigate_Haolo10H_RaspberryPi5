@@ -1,0 +1,23 @@
+{
+  "documentTitle": "导出 - Frigate",
+  "search": "搜索",
+  "noExports": "没有找到导出的项目",
+  "deleteExport": "删除导出的项目",
+  "deleteExport.desc": "你确定要删除 {{exportName}} 吗？",
+  "editExport": {
+    "title": "重命名导出",
+    "desc": "为此导出项目输入新名称。",
+    "saveExport": "保存导出"
+  },
+  "toast": {
+    "error": {
+      "renameExportFailed": "重命名导出失败：{{errorMessage}}"
+    }
+  },
+  "tooltip": {
+    "shareExport": "分享导出",
+    "downloadVideo": "下载视频",
+    "editName": "编辑名称",
+    "deleteExport": "删除导出"
+  }
+}

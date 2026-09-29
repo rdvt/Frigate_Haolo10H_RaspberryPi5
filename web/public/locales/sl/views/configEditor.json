@@ -1,0 +1,18 @@
+{
+  "documentTitle": "Urejevalnik konfiguracij - Frigate",
+  "configEditor": "Urejevalnik konfiguracij",
+  "copyConfig": "Kopiraj konfiguracijo",
+  "saveAndRestart": "Shrani & ponovno zaženi",
+  "saveOnly": "Shani",
+  "toast": {
+    "success": {
+      "copyToClipboard": "Konfiguracija kopirana v odložišče."
+    },
+    "error": {
+      "savingError": "Napaka pri shranjevanju konfiguracije"
+    }
+  },
+  "confirm": "Izhod brez shranjevanja?",
+  "safeConfigEditor": "Urejevalnik konfiguracij (Varni Način)",
+  "safeModeDescription": "Frigate je v varnem načinu zaradi napake pri preverjanju konfiguracije."
+}

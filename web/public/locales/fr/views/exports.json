@@ -1,0 +1,23 @@
+{
+  "documentTitle": "Exports - Frigate",
+  "search": "Rechercher",
+  "noExports": "Aucune exportation trouvée",
+  "deleteExport": "Supprimer l'exportation",
+  "deleteExport.desc": "Êtes-vous sûr de vouloir supprimer {{exportName}} ?",
+  "editExport": {
+    "title": "Renommer l'exportation",
+    "desc": "Saisissez un nouveau nom pour cette exportation.",
+    "saveExport": "Enregistrer l'exportation"
+  },
+  "toast": {
+    "error": {
+      "renameExportFailed": "Échec du renommage de l'exportation : {{errorMessage}}"
+    }
+  },
+  "tooltip": {
+    "shareExport": "Partager l'exportation",
+    "downloadVideo": "Télécharger la vidéo",
+    "editName": "Modifier le nom",
+    "deleteExport": "Supprimer l'exportation"
+  }
+}
