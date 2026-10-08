@@ -11,11 +11,14 @@ models
 *.mp4
 # Docker image exported by build_hailo10h_image.sh (too large for Git, >100 MB)
 dist/
+**/dist/
 *.tar.gz
-# Hailo packages are not versioned; download them from the Hailo Developer Zone
-# (see hailo_files/README.txt)
+# Hailo proprietary packages — not versioned; download from the Hailo Developer Zone
+# (see hailo_files/README.txt inside each version directory)
 hailo_files/*.deb
 hailo_files/*.whl
+**/hailo_files/*.deb
+**/hailo_files/*.whl
 *.db
 *.csv
 frigate/version.py

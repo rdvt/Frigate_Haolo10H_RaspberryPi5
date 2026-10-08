@@ -1,0 +1,65 @@
+{
+  "detected": "zaznanih",
+  "events": {
+    "noFoundForTimePeriod": "Za to časovno obdobje ni bilo najdenih dogodkov.",
+    "label": "Dogodki",
+    "aria": "Izberi dogodke"
+  },
+  "allCameras": "Vse kamere",
+  "empty": {
+    "motion": "Ni najdenih podatkov o gibanju",
+    "alert": "Ni opozoril za pregled",
+    "detection": "Ni zaznanih elementov za pregled",
+    "recordingsDisabled": {
+      "title": "Snemanje mora biti omogočeno",
+      "description": "Elemente pregleda je mogoče ustvariti le za kamero, če so za to kamero omogočeni posnetki."
+    }
+  },
+  "recordings": {
+    "documentTitle": "Posnetki - Frigate"
+  },
+  "camera": "Kamera",
+  "documentTitle": "Pregled - Frigate",
+  "alerts": "Opozorila",
+  "detections": "Zaznavanja",
+  "motion": {
+    "label": "Premik",
+    "only": "Samo premik"
+  },
+  "timeline": "Časovnica",
+  "timeline.aria": "Izberi časovnico",
+  "calendarFilter": {
+    "last24Hours": "Zadnjih 24 ur"
+  },
+  "markAsReviewed": "Označi kot Pregledano",
+  "markTheseItemsAsReviewed": "Označi te elemente kot pregledane",
+  "newReviewItems": {
+    "label": "Ogled novih elementov za pregled",
+    "button": "Novi elementi za pregled"
+  },
+  "selected_one": "{{count}} izbranih",
+  "selected_other": "{{count}} izbranih",
+  "zoomIn": "Povečaj",
+  "zoomOut": "Pomanjšaj",
+  "detail": {
+    "label": "Podrobnosti",
+    "noDataFound": "Ni podrobnosti za preverbo",
+    "aria": "Preklopi pregled podrobnosti",
+    "trackedObject_one": "objektov: {{count}}",
+    "trackedObject_other": "objektov: {{count}}",
+    "noObjectDetailData": "Ni podrobnosti za izbran objekt.",
+    "settings": "Nastavitve pregleda podrobnosti",
+    "alwaysExpandActive": {
+      "title": "Vedno razširi aktivne",
+      "desc": "Vedno razširi podrobnosti objektov aktivnega elementa pregleda, če so na voljo."
+    }
+  },
+  "objectTrack": {
+    "trackedPoint": "Točka za sledenje",
+    "clickToSeek": "Pritisnite, da se premaknete na izbran čas"
+  },
+  "select_all": "Vse",
+  "normalActivity": "Normalno",
+  "needsReview": "Potrebuje pregled",
+  "securityConcern": "Varnostno tveganje"
+}
